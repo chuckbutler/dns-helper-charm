@@ -1,0 +1,37 @@
+#!/usr/bin/python
+
+from charmhelpers.core import hookenv
+from charmhelpers.core import host
+from helpers import refresh_config
+from shlex import split
+import subprocess
+import sys
+
+hooks = hookenv.Hooks()
+log = hookenv.log
+
+SERVICE = 'dns-helper'
+
+
+@hooks.hook('programmable-relation-changed')
+def config_changed():
+    config = hookenv.config()
+    call("relation-set domain={}".format(config['domain']))
+    call("relation-set alias={}".format(config['alias']))
+    call("relation-set addr={}".format(hookenv.unit_get('private-address')))
+    call("relation-set rr={}".format(config['rr']))
+
+    nameserver = hookenv.relation_get('private-address')
+    with open('/etc/resolvconf/resolv.conf.d/head', 'a') as f:
+        f.write("nameserver {}\n".format(nameserver))
+        f.write("search {}\n".format(config['domain']))
+
+    host.service('restart', 'resolvconf')
+
+def call(cmd):
+    runnable_cmd = split(cmd)
+    subprocess.call(runnable_cmd)
+
+if __name__ == "__main__":
+    # execute a hook based on the name the program is called by
+    hooks.execute(sys.argv)

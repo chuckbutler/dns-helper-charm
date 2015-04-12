@@ -1,0 +1,26 @@
+#!/usr/bin/python
+
+from charmhelpers.core import hookenv
+from charmhelpers.core import host
+from helpers import refresh_config
+import sys
+import subprocess
+
+hooks = hookenv.Hooks()
+log = hookenv.log
+
+SERVICE = 'dns-helper'
+
+
+@hooks.hook('config-changed')
+def config_changed():
+    changed = refresh_config()
+    if changed:
+        log('Config changed, calling established relationship hook')
+        out = subprocess.check_output(['relation-ids', 'programmable'])
+        print(out)
+
+
+if __name__ == "__main__":
+    # execute a hook based on the name the program is called by
+    hooks.execute(sys.argv)

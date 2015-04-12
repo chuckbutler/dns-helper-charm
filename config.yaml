@@ -1,0 +1,14 @@
+options:
+  domain:
+    type: string
+    default: "lan.dasroot.net"
+    description: "Canonical domain to append to"
+  alias:
+    type: string
+    default:
+    description: "The subdomain to add, eg: mail"
+  rr:
+    type: string
+    default: "A"
+    description: "Record Resource type, possible values; A, CNAME, AAAA, NS"
+

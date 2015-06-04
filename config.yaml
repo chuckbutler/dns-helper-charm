@@ -1,7 +1,7 @@
 options:
   domain:
     type: string
-    default: "lan.dasroot.net"
+    default: "example.com"
     description: "Canonical domain to append to"
   alias:
     type: string
